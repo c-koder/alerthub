@@ -1,0 +1,51 @@
+# Node.js / npm
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Frontend
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/.env.development
+frontend/.env.production
+frontend/.env.test
+frontend/dist/
+frontend/build/
+
+# Backend
+backend/node_modules/
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.production
+backend/.env.test
+backend/coverage/
+backend/dist/
+backend/build/
+
+# IDEs and editor settings
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# package-lock.json
+# yarn.lock
+
+# Other
+*.test.js
+*.test.ts
