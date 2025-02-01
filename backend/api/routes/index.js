@@ -1,4 +1,7 @@
+// routes/index.js
 const router = require("express").Router();
+
+const AuthRoutes = require("./auth.routes");
 
 router.use(function (req, res, next) {
   res.header(
@@ -7,5 +10,7 @@ router.use(function (req, res, next) {
   );
   next();
 });
+
+router.use("/auth", AuthRoutes);
 
 module.exports = router;
