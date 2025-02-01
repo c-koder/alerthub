@@ -1,9 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   cursor: default;
+  font-family: "Inter", serif;
+  font-optical-sizing: auto;
 }
 
 a {
   cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  cursor: text !important;
 }
 
 html {
