@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -6,12 +6,13 @@ import Navbar from "../components/navbar.component";
 import Home from "../pages/home";
 import Signin from "../pages/signin";
 import Signup from "../pages/signup";
+import Communities from "../pages/communities";
 
 import { refreshUser } from "../redux/slices/auth.slice";
 
 const Routing = () => {
   const dispatch = useDispatch();
-  const { refreshing } = useSelector((state) => state.auth);
+  const { user, refreshing } = useSelector((state) => state.auth);
   const [delayedLoading, setDelayedLoading] = useState(true);
 
   useEffect(() => {
@@ -41,11 +42,18 @@ const Routing = () => {
   return (
     <>
       <Navbar />
-      <Routes>
-        <Route exact path="/" element={<Home />} />
-        <Route exact path="/signin" element={<Signin />} />
-        <Route exact path="/signup" element={<Signup />} />
-      </Routes>
+      <div className=" xl:mt-0 lg:mt-0 mt-16">
+        <Routes>
+          <Route exact path="/" element={<Home />} />
+          <Route
+            exact
+            path="/signin"
+            element={!user ? <Signin /> : <Navigate to="/communities" />}
+          />
+          <Route exact path="/signup" element={<Signup />} />
+          <Route exact path="/communities" element={<Communities />} />
+        </Routes>
+      </div>
     </>
   );
 };

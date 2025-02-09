@@ -23,12 +23,21 @@ const Navbar = () => {
   };
 
   return (
-    <Disclosure as="nav" className="border-b border-gray-200 shadow-xs">
-      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+    <Disclosure
+      as="nav"
+      className="fixed w-full top-0 bg-white border-b border-gray-200 shadow-xs z-10"
+    >
+      <div className="mx-auto max-w-6xl sm:px-0 md:px-4 px-6">
         <div className="relative flex h-20 items-center justify-between">
           <div className="flex flex-1 items-stretch justify-start sm:px-0 px-3">
             <div className="flex shrink-0 items-center">
-              <img alt="Alert Hub" src={Logo} className="h-6 sm:h-9 w-auto" />
+              <Link to="/">
+                <img
+                  alt="Alert Hub"
+                  src={Logo}
+                  className="h-6 sm:h-9 w-auto cursor-pointer"
+                />
+              </Link>
             </div>
             <div className="w-1/2 sm:w-full flex justify-center px-4 lg:px-8">
               <div className="relative w-full max-w-3xl">
@@ -109,15 +118,15 @@ const Navbar = () => {
                 >
                   <MenuItem>
                     <Link
-                      href="/"
+                      to="/communities/my"
                       className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                     >
-                      Your Profile
+                      Your Communities
                     </Link>
                   </MenuItem>
                   <MenuItem>
                     <Link
-                      href="/"
+                      to="/"
                       className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                     >
                       Settings

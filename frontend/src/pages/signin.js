@@ -16,26 +16,26 @@ const Signin = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, loading, signinError, signinSuccess } = useSelector(
+  const { loading, signinError, signinSuccess } = useSelector(
     (state) => state.auth
   );
-
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
 
   const handleSubmit = () => {
     dispatch(signinUser(formData));
   };
 
   useEffect(() => {
-    setFormData({
-      email: "",
-      password: "",
-    });
-  }, [signinSuccess]);
+    if (signinSuccess) {
+      setFormData({
+        email: "",
+        password: "",
+      });
+
+      setTimeout(() => {
+        navigate("/communities");
+      }, 2000);
+    }
+  }, [signinSuccess, navigate]);
 
   useEffect(() => {
     if (signinError) {
