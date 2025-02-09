@@ -17,15 +17,17 @@ const Alert = ({ title, data, error, success }) => {
       } p-4`}
     >
       <div
-        className={`flex items-center gap-2 ${
-          error ? "text-red-800" : success && "text-emerald-800"
+        className={`flex items-center gap-2 border-b pb-2 ${
+          error
+            ? "border-red-800/10 text-red-800"
+            : success && "border-emerald-800/10 text-emerald-800"
         }`}
       >
         <ExclamationTriangleIcon width={20} className="mt-0.5" />
         <strong className="block font-medium">{title}</strong>
       </div>
       <p
-        className={`mt-2 text-sm ${
+        className={`mt-2 text-sm text-justify ${
           error ? "text-red-700" : success && "text-emerald-700"
         }`}
       >

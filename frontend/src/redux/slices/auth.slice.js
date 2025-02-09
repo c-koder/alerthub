@@ -54,6 +54,11 @@ export const refreshUser = createAsyncThunk(
   }
 );
 
+export const updateUserCommunities = (payload) => ({
+  type: "auth/updateUserCommunities",
+  payload,
+});
+
 // Initial state
 const initialState = {
   user: null,
@@ -76,6 +81,12 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
       state.success = false;
+    },
+    updateUserCommunities: (state, action) => {
+      const { communityId } = action.payload;
+      if (!state.user.communities.includes(communityId)) {
+        state.user.communities.push(communityId);
+      }
     },
   },
   extraReducers: (builder) => {
