@@ -8,7 +8,9 @@ const { logMessage } = require("../../utils/logger");
 // @access  Public
 const refreshUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id).select("-password");
+    const user = await User.findById(req.user.id)
+      .populate("communities")
+      .select("-password");
     res.json({ user });
   } catch (error) {
     next(error);
@@ -116,7 +118,7 @@ const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate("communities");
     if (!user) {
       logMessage("error", "loginUser", "User not found", "/api/auth/login");
       return res.status(400).json({ data: "Invalid credentials" });
@@ -141,6 +143,12 @@ const loginUser = async (req, res, next) => {
       maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days
       sameSite: "strict", // Prevent CSRF attacks
     });
+
+    req.session.user = {
+      _id: user._id,
+      username: user.username,
+      email: user.email,
+    };
 
     logMessage(
       "info",
@@ -183,7 +191,10 @@ const logoutUser = async (req, res, next) => {
       "/api/auth/logout"
     );
 
-    res.status(200).json({ data: "Logged out successfully" });
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.status(200).json({ data: "Logged out successfully" });
+    });
   } catch (error) {
     logMessage("error", "signoutUser", error.message, "/api/auth/logout");
     next(error);

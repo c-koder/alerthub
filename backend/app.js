@@ -8,6 +8,11 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const morgan = require("morgan");
 
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+
+const { socketConnection } = require("./utils/socket");
+
 const rateLimit = require("express-rate-limit");
 
 const connectDB = require("./config/db");
@@ -17,6 +22,7 @@ const errorHandler = require("./middleware/errorHandler");
 const app = express();
 const server = http.createServer(app);
 
+socketConnection(server);
 connectDB();
 
 const limiter = rateLimit({
@@ -30,6 +36,23 @@ app.use(
   cors({
     origin: ["http://localhost:3000"],
     credentials: true,
+  })
+);
+
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.DB_URL,
+      collectionName: "sessions",
+    }),
+    cookie: {
+      secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      httpOnly: true,
+      maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+    },
   })
 );
 
