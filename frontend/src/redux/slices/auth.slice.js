@@ -4,6 +4,7 @@ import {
   userSignin,
   userSignout,
   userRefresh,
+  userNotifications,
 } from "../../services/auth.service";
 
 export const signupUser = createAsyncThunk(
@@ -54,6 +55,18 @@ export const refreshUser = createAsyncThunk(
   }
 );
 
+export const getNotifications = createAsyncThunk(
+  "auth/getNotifications",
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const response = await userNotifications();
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const updateUserCommunities = (payload) => ({
   type: "auth/updateUserCommunities",
   payload,
@@ -64,6 +77,8 @@ const initialState = {
   user: null,
   loading: false,
   refreshing: false,
+  notifications: [],
+  notificationError: null,
   signinError: null,
   signupError: null,
   signoutError: null,
@@ -81,6 +96,15 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
       state.success = false;
+    },
+    updateUserNotifications: (state, action) => {
+      const newNotification = action.payload;
+      const exists = state.notifications.some(
+        (notif) => notif._id === newNotification._id
+      );
+      if (!exists) {
+        state.notifications = [newNotification, ...state.notifications];
+      }
     },
     updateUserCommunities: (state, action) => {
       const { communityId } = action.payload;
@@ -152,9 +176,22 @@ const authSlice = createSlice({
       .addCase(refreshUser.rejected, (state, action) => {
         state.refreshing = false;
         state.refreshError = action.payload;
+      })
+      // Notifications
+      .addCase(getNotifications.pending, (state) => {
+        state.loading = true;
+        state.notificationError = null;
+      })
+      .addCase(getNotifications.fulfilled, (state, action) => {
+        state.loading = false;
+        state.notifications = action.payload;
+      })
+      .addCase(getNotifications.rejected, (state, action) => {
+        state.loading = false;
+        state.notificationError = action.payload;
       });
   },
 });
 
-export const { clearError } = authSlice.actions;
+export const { clearError, updateUserNotifications } = authSlice.actions;
 export default authSlice.reducer;
