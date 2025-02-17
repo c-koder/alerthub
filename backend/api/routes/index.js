@@ -2,6 +2,9 @@
 const router = require("express").Router();
 
 const AuthRoutes = require("./auth.routes");
+const CommunityRoutes = require("./community.routes");
+const IncidentRoutes = require("./incident.routes");
+const NotificationRoutes = require("./notification.routes");
 
 router.use(function (req, res, next) {
   res.header(
@@ -12,5 +15,8 @@ router.use(function (req, res, next) {
 });
 
 router.use("/auth", AuthRoutes);
+router.use("/communities", CommunityRoutes);
+router.use("/incidents", IncidentRoutes);
+router.use("/notifications", NotificationRoutes);
 
 module.exports = router;

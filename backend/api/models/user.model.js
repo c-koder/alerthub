@@ -17,7 +17,7 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    state: {
+    district: {
       type: String,
       required: true,
     },
@@ -30,6 +30,12 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    communities: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Community",
+      },
+    ],
   },
   {
     timestamps: true,
