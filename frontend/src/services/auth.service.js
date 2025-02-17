@@ -16,4 +16,8 @@ const userRefresh = (params) => {
   return http.get("/auth/refresh", params);
 };
 
-export { userSignup, userSignin, userSignout, userRefresh };
+const userNotifications = (params) => {
+  return http.get("/notifications", params);
+};
+
+export { userSignup, userSignin, userSignout, userRefresh, userNotifications };

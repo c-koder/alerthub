@@ -7,6 +7,8 @@ import Home from "../pages/home";
 import Signin from "../pages/signin";
 import Signup from "../pages/signup";
 import Communities from "../pages/communities";
+import UserCommunities from "../pages/userCommunities";
+import Community from "../pages/community";
 
 import { refreshUser } from "../redux/slices/auth.slice";
 
@@ -52,6 +54,8 @@ const Routing = () => {
           />
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/communities" element={<Communities />} />
+          <Route exact path="/communities/:code" element={<Community />} />
+          <Route exact path="/communities/my" element={<UserCommunities />} />
         </Routes>
       </div>
     </>

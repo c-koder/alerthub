@@ -7,11 +7,12 @@ import {
 } from "@headlessui/react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { BellIcon } from "@heroicons/react/24/outline";
 
 import { Logo } from "../utils/images";
 
 import { signoutUser } from "../redux/slices/auth.slice";
+import Notifications from "./notifications.component";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -52,20 +53,26 @@ const Navbar = () => {
                   className="w-full cursor-text rounded-md border border-gray-200 py-2.5 ps-4 shadow-xs sm:text-sm outline-0"
                 />
 
-                <span className="absolute inset-y-0 end-0 grid w-10 place-content-center">
+                <Link
+                  className="absolute inset-y-2.5 end-12 w-100 hidden sm:flex place-content-center font-medium text-sm underline text-primary-500"
+                  to="/communities"
+                >
+                  See All
+                </Link>
+
+                <span className="absolute hidden sm:block inset-y-0 end-0 w-10 place-content-center">
                   <button
                     type="button"
                     className="text-gray-600 hover:text-gray-700"
                   >
                     <span className="sr-only">Search</span>
-
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth="1.5"
                       stroke="currentColor"
-                      className="size-4"
+                      className="size-4 cursor-pointer"
                     >
                       <path
                         strokeLinecap="round"
@@ -89,26 +96,16 @@ const Navbar = () => {
                 </button>
               </Link>
             )}
-            {user && (
-              <button
-                type="button"
-                className="relative rounded-full bg-secondary-100 p-1 text-primary-500 outline-hidden"
-              >
-                <span className="absolute -inset-1.5" />
-                <span className="sr-only">View notifications</span>
-                <BellIcon aria-hidden="true" className="size-6" />
-              </button>
-            )}
+            {user && <Notifications />}
             {user && (
               <Menu as="div" className="relative ml-3">
                 <div>
-                  <MenuButton className="relative flex rounded-full bg-gray-800 text-sm outline-hidden">
-                    <span className="absolute -inset-1.5" />
+                  <MenuButton className="relative rounded-full bg-secondary-400 p-1 text-secondary-100 hover:bg-secondary-600 focus:outline-none transition duration-200">
+                    <span className="absolute -inset-1.5 cursor-pointer" />
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="size-8 rounded-full"
+                    <UserCircleIcon
+                      aria-hidden="true"
+                      className="w-6 h-6 cursor-pointer"
                     />
                   </MenuButton>
                 </div>
@@ -122,14 +119,6 @@ const Navbar = () => {
                       className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                     >
                       Your Communities
-                    </Link>
-                  </MenuItem>
-                  <MenuItem>
-                    <Link
-                      to="/"
-                      className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
-                    >
-                      Settings
                     </Link>
                   </MenuItem>
                   <MenuItem>
