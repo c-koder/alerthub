@@ -56,7 +56,6 @@ const createIncident = async (req, res, next) => {
       title: `New incident created in ${community.name}`,
       user: req.session.user._id,
       content: `${incident.title} has been created in your community.`,
-      read: false,
       receivers: community.members,
     };
 
