@@ -20,6 +20,7 @@ import { fetchCommunityByCode } from "../redux/slices/community.slice";
 
 import IncidentCreateModal from "../components/incidentCreateModal.component";
 import Incident from "../components/incident.component";
+import { DefaultImg } from "../utils/images";
 
 const Community = () => {
   const dispatch = useDispatch();
@@ -63,13 +64,20 @@ const Community = () => {
     <div className="relative min-h-screen flex flex-col">
       <section className="w-full xl:pt-32 lg:pt-20 pt-12 flex-grow">
         <div className="flex flex-col w-full max-w-3xl mx-auto bg-white border border-primary-500/25 rounded-2xl shadow-xs">
-          <div className="flex flex-row gap-2 items-start border border-b-primary-500/25 bg-secondary-200/10 mb-2 p-6 rounded-tl-2xl rounded-tr-2xl">
-            <Link to="/communities/my" className="cursor-pointer">
+          <div className="flex sm:flex-row flex-col justify-center sm:text-left text-center gap-2 items-center border border-b-primary-500/25 bg-secondary-200/10 mb-2 p-6 rounded-tl-2xl rounded-tr-2xl">
+            <Link to="/communities/my" className="cursor-pointer me-2">
               <ArrowLeftCircleIcon
                 width={32}
                 className="cursor-pointer text-secondary-800/50"
               />
             </Link>
+            <div className="rounded-full w-14 h-14 overflow-hidden border border-secondary-600/25 me-1">
+              <img
+                className="w-auto h-full object-center object-cover"
+                src={community?.avatar || DefaultImg}
+                alt={community?.name}
+              />
+            </div>
             <div>
               <h1 className="text-2xl font-semibold text-secondary-800">
                 {community?.name}
@@ -102,10 +110,20 @@ const Community = () => {
                   </button>
                 </MenuItem>
                 <MenuItem>
-                  <button className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden">
+                  <button
+                    className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                    onClick={() => {
+                      const url = window.location.href;
+                      navigator.clipboard
+                        .writeText(url)
+                        .then(() => alert("Link copied to clipboard!"))
+                        .catch((err) => console.error("Failed to copy: ", err));
+                    }}
+                  >
                     Copy Link
                   </button>
                 </MenuItem>
+
                 {community?.manager !== user?._id && (
                   <MenuItem>
                     <button className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden">

@@ -67,6 +67,19 @@ export const getNotifications = createAsyncThunk(
   }
 );
 
+export const markNotificationsAsRead = createAsyncThunk(
+  "auth/markNotificationsAsRead",
+  async (_, { getState, dispatch }) => {
+    const { notifications } = getState().auth;
+    const updatedNotifications = notifications.map((notif) => ({
+      ...notif,
+      read: true,
+    }));
+
+    dispatch(setNotifications(updatedNotifications));
+  }
+);
+
 export const updateUserCommunities = (payload) => ({
   type: "auth/updateUserCommunities",
   payload,
@@ -96,6 +109,9 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
       state.success = false;
+    },
+    setNotifications: (state, action) => {
+      state.notifications = action.payload;
     },
     updateUserNotifications: (state, action) => {
       const newNotification = action.payload;
@@ -189,9 +205,17 @@ const authSlice = createSlice({
       .addCase(getNotifications.rejected, (state, action) => {
         state.loading = false;
         state.notificationError = action.payload;
+      })
+      // Notifications as Read
+      .addCase(markNotificationsAsRead.fulfilled, (state) => {
+        state.notifications = state.notifications.map((notif) => ({
+          ...notif,
+          read: true,
+        }));
       });
   },
 });
 
-export const { clearError, updateUserNotifications } = authSlice.actions;
+export const { clearError, updateUserNotifications, setNotifications } =
+  authSlice.actions;
 export default authSlice.reducer;
