@@ -52,17 +52,17 @@ const createIncident = async (req, res, next) => {
 
     await community.save();
 
-    const notification = {
+    const newNotif = {
       title: `New incident created in ${community.name}`,
       user: req.session.user._id,
       content: `${incident.title} has been created in your community.`,
       receivers: community.members,
     };
 
-    await Notification.create(notification);
+    await Notification.create(newNotif);
 
     community.members.forEach((member) => {
-      emitNewNotification(member.toString(), notification);
+      emitNewNotification(member.toString(), newNotif);
     });
 
     logMessage(
