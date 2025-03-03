@@ -32,9 +32,9 @@ const Notifications = () => {
       query: { userId: user._id },
     });
 
-    socket.on("new_notification", (notif) => {
-      dispatch(updateUserNotifications({ ...notif, read: false }));
-      toast.info(<ToastNotif content={notif.content} />);
+    socket.on("new_notification", (newNotif) => {
+      dispatch(updateUserNotifications({ ...newNotif, read: false }));
+      toast.info(<ToastNotif content={newNotif.content} />);
     });
 
     return () => {
@@ -114,7 +114,7 @@ const ToastNotif = ({ content }) => {
   return (
     <div>
       <h3 className="font-semibold text-xs">NEW INCIDENT</h3>
-      <p className="text-sm mt-1">{content}</p>
+      <p className="text-sm mt-1.5">{content}</p>
     </div>
   );
 };
