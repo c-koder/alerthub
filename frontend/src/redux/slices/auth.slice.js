@@ -172,7 +172,6 @@ const authSlice = createSlice({
       .addCase(signoutUser.fulfilled, (state) => {
         state.loading = false;
         state.user = null;
-        state.token = null;
         state.signoutSuccess = true;
       })
       .addCase(signoutUser.rejected, (state, action) => {
