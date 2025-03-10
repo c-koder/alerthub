@@ -46,6 +46,3 @@ Thumbs.db
 # package-lock.json
 # yarn.lock
 
-# Other
-*.test.js
-*.test.ts
