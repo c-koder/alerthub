@@ -13,7 +13,7 @@ const Signup = () => {
     username: "",
     phoneNumber: "",
     city: "",
-    state: "",
+    district: "",
     email: "",
     password: "",
   });
@@ -40,7 +40,7 @@ const Signup = () => {
       username: "",
       phoneNumber: "",
       city: "",
-      state: "",
+      district: "",
       email: "",
       password: "",
     });
@@ -129,21 +129,21 @@ const Signup = () => {
 
             <div>
               <label
-                htmlFor="state"
+                htmlFor="district"
                 className="block text-sm/6 font-medium text-gray-900"
               >
-                State
+                District
               </label>
               <div className="mt-2">
                 <input
-                  id="state"
-                  name="state"
+                  id="district"
+                  name="district"
                   type="text"
                   required
-                  placeholder="Enter your state"
-                  value={formData.state}
+                  placeholder="Enter your district"
+                  value={formData.district}
                   onChange={(e) =>
-                    setFormData({ ...formData, state: e.target.value })
+                    setFormData({ ...formData, district: e.target.value })
                   }
                   className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-0 border border-gray-300 placeholder:text-gray-400 focus:border-primary-600 sm:text-sm/6"
                 />

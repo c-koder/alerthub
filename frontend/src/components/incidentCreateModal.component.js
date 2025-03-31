@@ -21,7 +21,7 @@ const IncidentCreateModal = ({ open, onClose, communityCode }) => {
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
-  const { createLoading, createError, createSuccess } = useSelector(
+  const { createLoading, createError, createSuccess, limit } = useSelector(
     (state) => state.incident // Assuming incident slice exists
   );
 
@@ -69,9 +69,8 @@ const IncidentCreateModal = ({ open, onClose, communityCode }) => {
         description: "",
         images: ["", "", ""],
       });
-      dispatch(fetchIncidents(communityCode));
     }
-  }, [createSuccess, navigate, dispatch, communityCode]);
+  }, [createSuccess, dispatch, communityCode]);
 
   useEffect(() => {
     console.log(createError);

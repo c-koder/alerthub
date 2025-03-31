@@ -58,6 +58,7 @@ const CommunityCreateModal = ({ open, onClose }) => {
         city: "",
         district: "",
       });
+      window.location.reload();
     }
   }, [createSuccess, navigate]);
 

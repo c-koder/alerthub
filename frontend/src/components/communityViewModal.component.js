@@ -11,6 +11,7 @@ import { DefaultImg } from "../utils/images";
 
 import { joinExistingCommunity } from "../redux/slices/community.slice";
 import Alert from "./alert.component";
+import { useEffect } from "react";
 
 const CommunityModal = ({ communities, open, onClose }) => {
   const dispatch = useDispatch();
@@ -80,8 +81,9 @@ const CommunityModal = ({ communities, open, onClose }) => {
                       className="flex w-full justify-center rounded-md bg-primary-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-primary-500 disabled:bg-opacity-50 disabled:cursor-not-allowed"
                       onClick={handleJoin}
                       disabled={
-                        user?.communities?.includes(activeCommunityId) ||
-                        joinLoading
+                        user?.communities?.find(
+                          (c) => c._id === activeCommunityId
+                        ) || joinLoading
                       }
                     >
                       {user?.communities?.includes(activeCommunityId)
