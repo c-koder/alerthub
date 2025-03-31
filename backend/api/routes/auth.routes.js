@@ -19,7 +19,7 @@ router.post(
     body("username").notEmpty().withMessage("Username is required"),
     body("phoneNumber").notEmpty().withMessage("Phone Number is required"),
     body("city").notEmpty().withMessage("City is required"),
-    body("state").notEmpty().withMessage("State is required"),
+    body("district").notEmpty().withMessage("District is required"),
     body("email").isEmail().withMessage("Invalid email"),
     body("password")
       .isLength({ min: 6 })

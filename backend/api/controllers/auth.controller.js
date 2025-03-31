@@ -1,24 +1,10 @@
 const User = require("../models/user.model");
-const generateToken = require("../../utils/generateToken");
 const { validationResult } = require("express-validator");
 const { logMessage } = require("../../utils/logger");
-
-// @desc    Refresh user data
-// @route   GET /api/auth/refresh
-// @access  Public
-const refreshUser = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.user.id)
-      .populate("communities")
-      .select("-password");
-    res.json({ user });
-  } catch (error) {
-    next(error);
-  }
-};
+const generateToken = require("../../utils/generateToken");
 
 // @desc    Register a new user
-// @route   POST /api/auth/register
+// @route   POST /api/auth/signup
 // @access  Public
 const registerUser = async (req, res, next) => {
   const errors = validationResult(req);
@@ -27,25 +13,16 @@ const registerUser = async (req, res, next) => {
       .array()
       .map((err) => err.msg)
       .join(", ");
-
-    logMessage(
-      "error",
-      "Validation Middleware",
-      errorMessage,
-      "/api/auth/register"
-    );
-
     return res.status(400).json({ data: errorMessage });
   }
 
-  const { username, phoneNumber, city, state, email, password } = req.body;
+  const { username, phoneNumber, city, email, password, district } = req.body;
 
   try {
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
 
     if (existingUser) {
       let errorMessage = "User already exists";
-
       if (existingUser.username === username) {
         errorMessage = "Username is already taken";
       } else if (existingUser.email === email) {
@@ -53,7 +30,6 @@ const registerUser = async (req, res, next) => {
       }
 
       logMessage("error", "registerUser", errorMessage, "/api/auth/register");
-
       return res.status(400).json({ data: errorMessage });
     }
 
@@ -61,12 +37,13 @@ const registerUser = async (req, res, next) => {
       username,
       phoneNumber,
       city,
-      state,
+      district,
       email,
       password,
     });
 
     if (user) {
+      const token = generateToken(user._id);
       logMessage(
         "info",
         "registerUser",
@@ -77,7 +54,7 @@ const registerUser = async (req, res, next) => {
         _id: user._id,
         username: user.username,
         email: user.email,
-        token: generateToken(user._id),
+        token: token,
       });
     } else {
       logMessage(
@@ -89,13 +66,14 @@ const registerUser = async (req, res, next) => {
       res.status(400).json({ data: "Invalid user data" });
     }
   } catch (error) {
+    console.error("Error during registration:", error);
     logMessage("error", "registerUser", error.message, "/api/auth/register");
     next(error);
   }
 };
 
 // @desc    Login user
-// @route   POST /api/auth/login
+// @route   POST /api/auth/signin
 // @access  Public
 const loginUser = async (req, res, next) => {
   const errors = validationResult(req);
@@ -104,14 +82,6 @@ const loginUser = async (req, res, next) => {
       .array()
       .map((err) => err.msg)
       .join(", ");
-
-    logMessage(
-      "error",
-      "Validation Middleware",
-      errorMessage,
-      "/api/auth/register"
-    );
-
     return res.status(400).json({ data: errorMessage });
   }
 
@@ -157,24 +127,24 @@ const loginUser = async (req, res, next) => {
       "/api/auth/login"
     );
 
-    // Return user data (without the token)
     res.json({
       user: {
         _id: user._id,
         username: user.username,
         email: user.email,
         city: user.city,
-        state: user.state,
+        district: user.district,
       },
     });
   } catch (error) {
+    console.error("Error during login:", error);
     logMessage("error", "loginUser", error.message, "/api/auth/login");
     next(error);
   }
 };
 
-// @desc    Logout user (optional, since JWT is stateless)
-// @route   POST /api/auth/logout
+// @desc    Logout user
+// @route   POST /api/auth/signout
 // @access  Private
 const logoutUser = async (req, res, next) => {
   try {
@@ -196,7 +166,22 @@ const logoutUser = async (req, res, next) => {
       res.status(200).json({ data: "Logged out successfully" });
     });
   } catch (error) {
+    console.error("Error during logout:", error);
     logMessage("error", "signoutUser", error.message, "/api/auth/logout");
+    next(error);
+  }
+};
+
+// @desc    Refresh user data
+// @route   GET /api/auth/refresh
+// @access  Private
+const refreshUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id)
+      .populate("communities")
+      .select("-password");
+    res.json({ user });
+  } catch (error) {
     next(error);
   }
 };

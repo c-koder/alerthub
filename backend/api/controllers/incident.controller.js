@@ -84,21 +84,12 @@ const createIncident = async (req, res, next) => {
   }
 };
 
-// @desc    List all incidents
-// @route   GET /api/incidents
+/// @desc    List all incidents with pagination
+// @route   GET /api/incidents/:code
 // @access  Private
 const getIncidents = async (req, res, next) => {
-  // Validate request body
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const errorMessage = errors
-      .array()
-      .map((err) => err.msg)
-      .join(", ");
-    return res.status(400).json({ data: errorMessage });
-  }
-
-  const code = req.params.code;
+  const { code } = req.params;
+  const { page = 1, limit = 10 } = req.query;
 
   try {
     const user = await User.findById(req.session.user._id);
@@ -112,11 +103,22 @@ const getIncidents = async (req, res, next) => {
       return res.status(400).json({ data: "Community not found" });
     }
 
-    const incidents = await Incident.find({
-      community: community._id,
-    }).populate("user", "_id username email phoneNumber");
+    const incidents = await Incident.find({ community: community._id })
+      .skip((page - 1) * limit) // Skip incidents for previous pages
+      .limit(limit) // Limit the number of incidents per page
+      .populate("user", "_id username email phoneNumber")
+      .sort({ createdAt: -1 });
 
-    res.status(200).json({ data: incidents });
+    const totalIncidents = await Incident.countDocuments({
+      community: community._id,
+    });
+
+    res.status(200).json({
+      data: incidents,
+      total: totalIncidents,
+      page,
+      limit,
+    });
   } catch (error) {
     logMessage(
       "error",
