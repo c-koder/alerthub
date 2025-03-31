@@ -17,9 +17,9 @@ export const createNewIncident = createAsyncThunk(
 // Async thunk to fetch a single incident by code
 export const fetchIncidents = createAsyncThunk(
   "incident/get",
-  async (code, { rejectWithValue }) => {
+  async ({ code, page, limit }, { rejectWithValue }) => {
     try {
-      const response = await getIncidents(code);
+      const response = await getIncidents(code, page, limit);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data.data);
@@ -32,6 +32,9 @@ const initialState = {
   incidents: [],
   loading: false,
   error: null,
+  total: 0,
+  page: 1,
+  limit: 10,
   success: false,
   createLoading: false,
   createError: null,
@@ -72,7 +75,18 @@ const incidentSlice = createSlice({
       })
       .addCase(fetchIncidents.fulfilled, (state, action) => {
         state.loading = false;
-        state.incidents = action.payload.data;
+        if (action.payload.page === 1) {
+          state.incidents = action.payload.data;
+        } else {
+          const newIncidents = action.payload.data.filter(
+            (incident) =>
+              !state.incidents.some(
+                (existingIncident) => existingIncident._id === incident._id
+              )
+          );
+          state.incidents = [...state.incidents, ...newIncidents];
+        }
+        state.total = action.payload.total;
       })
       .addCase(fetchIncidents.rejected, (state, action) => {
         state.loading = false;

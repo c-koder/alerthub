@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Link, useNavigate, useParams } from "react-router-dom";
+
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
 import { EllipsisVerticalIcon } from "@heroicons/react/24/solid";
@@ -29,10 +31,12 @@ const Community = () => {
 
   const [openCreate, setOpenCreate] = useState(false);
   const [openMembers, setOpenMembers] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const { user } = useSelector((state) => state.auth);
   const { community, loading } = useSelector((state) => state.community);
-  const { incidents } = useSelector((state) => state.incident);
+  const { incidents, total, limit } = useSelector((state) => state.incident);
 
   useEffect(() => {
     if (!user) {
@@ -42,12 +46,27 @@ const Community = () => {
 
   useEffect(() => {
     if (code) {
+      setPage(1);
       dispatch(fetchCommunityByCode(code));
-      dispatch(fetchIncidents(code));
+      dispatch(fetchIncidents({ code, page: 1, limit }));
     } else {
       navigate("/communities");
     }
   }, [dispatch, code, navigate]);
+
+  const loadMoreIncidents = () => {
+    if (!hasMore) return;
+
+    const nextPage = page + 1;
+    setPage(nextPage);
+    dispatch(fetchIncidents({ code, page: nextPage, limit }));
+  };
+
+  useEffect(() => {
+    if (incidents.length !== 0 && incidents.length >= total) {
+      setHasMore(false);
+    }
+  }, [incidents, total]);
 
   if (loading) {
     return (
@@ -138,16 +157,28 @@ const Community = () => {
           {community?.members.find((e) => e._id === user._id) ||
           community?.manager === user._id ? (
             <div className="flex flex-col h-[600px]">
-              <div className="overflow-y-auto flex-grow px-4">
-                {incidents.length > 0 ? (
-                  incidents?.map((incident, index) => (
-                    <Incident key={index} data={incident} />
-                  ))
-                ) : (
-                  <h4 className="text-md text-center font-semibold text-secondary-600 my-4">
-                    No incidents yet!
-                  </h4>
-                )}
+              <div
+                className="overflow-y-auto flex-grow px-4"
+                id="scrollable-container"
+              >
+                <InfiniteScroll
+                  dataLength={incidents.length}
+                  next={loadMoreIncidents}
+                  hasMore={hasMore}
+                  loader={<h4>Loading...</h4>}
+                  scrollableTarget="scrollable-container"
+                  scrollThreshold={0.8}
+                >
+                  {incidents.length > 0 ? (
+                    incidents.map((incident, index) => (
+                      <Incident key={index} data={incident} />
+                    ))
+                  ) : (
+                    <h4 className="text-md text-center font-semibold text-secondary-600 my-4">
+                      No incidents yet!
+                    </h4>
+                  )}
+                </InfiniteScroll>
               </div>
 
               <div className="sticky bottom-0 w-full rounded-2xl bg-white px-4 pb-4 mt-4">
